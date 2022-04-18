@@ -48,12 +48,13 @@ public class MicronautCliCommand implements Runnable {
         // Async with CompletableFuture (Java 8+)
         // You can wait the end of job until some time is out and decide to do other things
         // if you consider the process too long ; the process still runs in background and
-        // will notify its end with .whenComplete
+        // will notify its end with .whenComplete()
+        // If you want to stop running job when timeout expires, you can use .orTimeout() instead
         //-------------------------------------------------------------------------------------
 
         System.out.println("---- Demo Part 2 ----");
 
-        int jobDuration = 9;
+        int jobDuration = 9; // Try with different values to see how it behaves (1s, 5s, 9s)
         int waitTime = 3;
 
         System.out.println("BEFORE ASYNC");
@@ -69,7 +70,7 @@ public class MicronautCliCommand implements Runnable {
 
         Integer result = -1;
 
-        //Primary wait
+        //Primary wait (waits only if Job is still running)
         try {
             result = future.get(waitTime, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
@@ -77,11 +78,11 @@ public class MicronautCliCommand implements Runnable {
         } catch (ExecutionException e) {
             System.out.println("exec exception");
         } catch (TimeoutException e) {
-            System.out.println("interrupted exception");
+            System.out.println("timeout exception");
         }
         System.out.println("At this point result is " + result);
 
-        //Another wait
+        //Another wait (waits only if Job is still running)
         try {
             result = future.get(waitTime, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
@@ -89,7 +90,7 @@ public class MicronautCliCommand implements Runnable {
         } catch (ExecutionException e) {
             System.out.println("exec exception");
         } catch (TimeoutException e) {
-            System.out.println("interrupted exception");
+            System.out.println("timeout exception");
         }
         System.out.println("At this point result is " + result);
 
